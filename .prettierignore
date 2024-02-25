@@ -1,0 +1,8 @@
+README.md
+.gitignore
+.package.json
+.package-lock.json
+.eslintrc.js
+.prettierrc
+.dockerignore
+Dockerfile
