@@ -30,20 +30,7 @@ These instructions will get you a copy of the project up and running on your loc
 
    This command uses `nodemon` to automatically restart the server when changes are detected.
 
-## Contributing
-
-We welcome contributions from everyone. Here are some ways you can contribute:
-
-- Reporting bugs
-- Suggesting enhancements
-- Writing code for bug fixes and new features
-- Improving documentation
-
-### Reporting Bugs and Suggesting Enhancements
-
-Please use the GitHub issues tracker to report bugs or suggest features.
-
-### Your First Code Contribution
+### Contribution
 
 1. **Create a branch** for your contribution:
 
