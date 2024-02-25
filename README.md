@@ -1,11 +1,3 @@
-Certainly! Here's a comprehensive `README.md` summary for your project, incorporating the setup, contribution guidelines, and basic Git workflows. Feel free to adjust it as necessary to fit your project's specific requirements and details.
-
----
-
-# Softdev-Red-Rice Project
-
-Welcome to the Softdev-Red-Rice project! This Express.js application is designed to provide a robust backend solution for web development needs. Whether you're contributing to bug fixes, new features, or documentation, your efforts are greatly appreciated.
-
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
@@ -60,7 +52,7 @@ Please use the GitHub issues tracker to report bugs or suggest features.
    ```
 
 2. **Make your changes** and commit them:
-    - Note:  Please run `npm run lint-format` to ensure your code follows our linting standards.
+    - Note:  Please run `npm run lint-format && npm run lint:fix` to ensure your code follows our linting standards.
     and fix it first
    ```bash
    git add .
