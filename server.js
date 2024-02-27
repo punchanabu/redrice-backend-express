@@ -1,9 +1,9 @@
-const dotenv = require("dotenv");
-const express = require("express");
-const connectDB = require("./config/db");
-const server = require("./server");
+const dotenv = require('dotenv');
+const express = require('express');
+const connectDB = require('./config/db');
+const server = require('./server');
 // load env vars
-dotenv.config({ path: "./config/config.env" });
+dotenv.config({ path: './config/config.env' });
 
 // connect DB
 connectDB();
@@ -23,7 +23,7 @@ app.listen(
 );
 
 // handle promise rejections
-process.on("unhandledRejection", (err, promise) => {
+process.on('unhandledRejection', (err, promise) => {
     console.log(`Error: ${err.message}`);
     // close server & exit process
     server.close(() => process.exit(1));

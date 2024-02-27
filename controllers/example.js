@@ -6,7 +6,7 @@ const exampleController = (req, res) => {
 
     // Send a response back to the client
     res.status(200).json({
-        message: "Example controller executed successfully",
+        message: 'Example controller executed successfully',
     });
 };
 
