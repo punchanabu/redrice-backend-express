@@ -10,7 +10,7 @@
         "lint": "eslint .",
         "format": "prettier --write .",
         "lint:fix": "eslint --fix .",
-        "lint-format": "npm run lint && npm run format"
+        "lint-format": "npm run lint:fix && npm run format"
     },
     "keywords": [],
     "author": "",
