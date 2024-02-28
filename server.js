@@ -1,15 +1,17 @@
 const dotenv = require('dotenv');
 const express = require('express');
 const connectDB = require('./config/db');
-const server = require('./server');
 const cookieParser = require('cookie-parser');
-const restaurant = require('./routes/restaurant');
+const server = require('./server');
+const errorHandler = require('./middleware/error');
 
 // load env vars
 dotenv.config({ path: './config/config.env' });
 
-// routes
+// import routes
+const restaurant = require('./routes/restaurant');
 const auth = require('./routes/auth');
+const reservation = require('./routes/reservation');
 
 // connect DB
 connectDB();
@@ -17,11 +19,15 @@ connectDB();
 const app = express();
 // body parser
 app.use(express.json());
-
 app.use(cookieParser());
 
+// use routes
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/restaurant', restaurant);
+app.use('/api/v1/reservation', reservation);
+
+// use centralize error handler
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(
