@@ -1,3 +1,4 @@
+// This function will handle all the errors that are thrown in the application
 const ErrorHandler = (err, req, res, next) => {
     console.error(err.stack);
     
