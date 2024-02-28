@@ -29,7 +29,6 @@ exports.register = async (req, res, next) => {
 // เงื่อนไขการ match ของ email และ password
 exports.login = async (req, res, next) => {
     const { email, password } = req.body;
-
     // Validate email & password
     if (!email || !password) {
         return res.status(400).json({
@@ -68,7 +67,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 
     const options = {
         expires: new Date(
-            Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+            Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
         ),
         httpOnly: true
     };

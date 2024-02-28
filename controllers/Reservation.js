@@ -13,11 +13,10 @@ exports.getReservations = async (req, res, next) => {
         }).lean(); // use lean for improve the performance :D ???
         
         // Filter based on user role and potential restaurandId
+
         if (req.user.role !== 'admin') { 
             query.where({ user: req.user.id });
-        } else if (req.params.restaurantId) {
-            query.where({ restaurant: req.params.restaurantId });
-        }
+        } 
 
         const reservations = await query;
 
@@ -59,11 +58,11 @@ exports.getReservation = async (req, res, next) => {
 // @access Private
 exports.addReservation = async (req, res, next) => {
     try {
-        const restaurandId = req.params.restaurandId;
-        req.body.restaurant = restaurandId;
+        const restaurantId = req.body.restaurantId;
+        req.body.restaurant = restaurantId;
         req.body.user = req.user.id;
-
-        const restaurant = await Restaurant.findById(restaurandId);
+        console.log(req.body);
+        const restaurant = await Restaurant.findById(restaurantId);
         if (!restaurant) {
             const error = new Error('No restaurant found');
             error.statusCode = 404;
@@ -151,7 +150,7 @@ exports.deleteReservation = async (req, res, next) => {
         }
 
         
-        await reservation.remove();
+        await reservation.deleteOne();
 
    
         res.status(200).json({ success: true, data: {}, message: 'Reservation deleted successfully' });

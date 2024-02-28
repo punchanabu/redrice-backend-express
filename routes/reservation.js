@@ -7,7 +7,7 @@ const router = express.Router({ mergeParams: true });
 const { protect, authorize } = require('../middleware/auth');
 
 router.route('/')
-    .get(getReservations)
+    .get(protect, authorize('user','admin'), getReservations)
     .post(protect, authorize('user', 'admin'), addReservation);
 router.route('/:id')
     .get(getReservation)
