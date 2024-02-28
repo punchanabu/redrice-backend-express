@@ -18,8 +18,7 @@ exports.register = async (req, res, next) => {
 
         sendTokenResponse(user, 200, res);
     } catch (err) {
-        res.status(400).json({ success: false });
-        console.log(err.stack);
+        next(new ErrorHandler(err.message, 400));
     }
 };
 
