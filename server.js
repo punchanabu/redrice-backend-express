@@ -3,6 +3,7 @@ const express = require('express');
 const connectDB = require('./config/db');
 const server = require('./server');
 const cookieParser = require('cookie-parser');
+const restaurant = require('./routes/restaurant');
 
 // load env vars
 dotenv.config({ path: './config/config.env' });
@@ -20,13 +21,14 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/v1/auth', auth);
+app.use('/api/v1/restaurant', restaurant);
 
 const PORT = process.env.PORT || 5000;
 app.listen(
     PORT,
     console.log(
-        `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`,
-    ),
+        `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
+    )
 );
 
 // handle promise rejections
