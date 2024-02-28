@@ -3,7 +3,7 @@ const express = require('express');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
 const server = require('./server');
-const errorHandler = require('./middleware/error');
+const errorHandler = require('./middleware/errorHandler');
 
 // load env vars
 dotenv.config({ path: './config/config.env' });

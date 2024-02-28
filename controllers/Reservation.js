@@ -43,7 +43,7 @@ exports.getReservation = async (req, res, next) => {
         if (!reservation) {
             const error = new Error('No reservation found');
             error.statusCode = 404;
-            next(error);
+            throw error;
         }
 
         res.status(200).json({ success: true, data: reservation });
@@ -67,14 +67,14 @@ exports.addReservation = async (req, res, next) => {
         if (!restaurant) {
             const error = new Error('No restaurant found');
             error.statusCode = 404;
-            next(error);
+            throw error;
         }
 
         // Check if there is table available for reservation
         if (restaurant.table_available < req.body.numberofTable) {
             const error = new Error(`Not enough table available number of table left: ${restaurant.table_available}`);
             error.statusCode = 400;
-            next(error);
+            throw error;
         }
         
         // The limit on the number of tables is enforced by the schema itself (`max: 3` on `numberofTable`)
@@ -107,13 +107,13 @@ exports.updateReservation = async (req, res, next) => {
         if (!appointment) {
             const error = new Error('No appointment found');
             error.statusCode = 404;
-            next(error);
+            throw error;
         }
 
         if (appointment.user.toString() !== req.user.id && req.user.role !== 'admin') {
             const error = new Error('Not authorized to update appointment');
             error.statusCode = 401;
-            next(error);
+            throw error;
         }
 
         appointment = await Reservation.findByIdAndUpdate(req.params.id, req.body, {
@@ -122,6 +122,39 @@ exports.updateReservation = async (req, res, next) => {
         });
 
         res.status(200).json({ success: true, data: appointment });
+    } catch (err) {
+        next(err); 
+    }
+};
+
+// @desc Delete reservation
+// @route DELETE /api/v1/reservations/:id
+// @params id
+// @access Private
+exports.deleteReservation = async (req, res, next) => {
+    try {
+        
+        const reservation = await Reservation.findById(req.params.id);
+
+
+        if (!reservation) {
+            const error = new Error('No reservation found');
+            error.statusCode = 404;
+            throw error;
+        }
+
+       
+        if (reservation.user.toString() !== req.user.id && req.user.role !== 'admin') {
+            const error = new Error('Not authorized to delete this reservation');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        
+        await reservation.remove();
+
+   
+        res.status(200).json({ success: true, data: {}, message: 'Reservation deleted successfully' });
     } catch (err) {
         next(err); 
     }
