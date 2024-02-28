@@ -29,35 +29,33 @@ exports.register = async (req, res, next) => {
 // เงื่อนไขการ match ของ email และ password
 exports.login = async (req, res, next) => {
     const { email, password } = req.body;
-    // Validate email & password
+
+   
     if (!email || !password) {
-        return res.status(400).json({
-            success: false,
-            msg: 'Please provide an email and password'
-        });
+        return next(new ErrorHandler('Please provide an email and password', 400));
     }
 
-    // check for user
-    const user = await User.findOne({ email }).select('+password');
+    try {
+        
+        const user = await User.findOne({ email }).select('+password');
 
-    if (!user) {
-        return res
-            .status(400)
-            .json({ success: false, msg: 'Invalid credentials' });
+        if (!user) {
+            return next(new ErrorHandler('Invalid credentials', 401));
+        }
+
+        // Check if password matches
+        const isMatch = await user.matchPassword(password);
+
+        if (!isMatch) {
+            return next(new ErrorHandler('Invalid credentials', 401));
+        }
+
+        sendTokenResponse(user, 200, res);
+    } catch (err) {
+        next(err);
     }
-
-    // check if password matches
-    const isMatch = await user.matchPassword(password);
-
-    if (!isMatch) {
-        return res
-            .status(401)
-            .json({ success: false, msg: 'Invalid credentials' });
-    }
-
-
-    sendTokenResponse(user, 200, res);
 };
+
 
 // Get token from model, create cookie and send response
 // ส่ง token ไป cookie
