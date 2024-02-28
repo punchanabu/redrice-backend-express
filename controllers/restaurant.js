@@ -1,6 +1,5 @@
 const Restaurant = require('../models/Restaurant');
 
-
 // @desc   Create new Restaurant
 // @route  POST /api/v1/restaurants
 // @access Private
@@ -95,4 +94,3 @@ exports.deleteRestaurant = async (req, res, next) => {
         return res.status(500).json({ success: false, message: `Cannot delete to Restaurant` });
     }
 };
-
