@@ -32,12 +32,13 @@ exports.updateRestaurant = async (req, res, next) => {
 
 exports.deleteRestaurant = async (req, res, next) => {
     try {
+        console.log('entry2');
         const restaurant = await Restaurant.findById(req.params.id);
         if (!restaurant) {
             return res.status(404).json({ success: false, message: `No restaurant with the id of ${req.params.id}` });
         }
         // Make sure user is the restaurant owner
-        if (restaurant.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        if (restaurant.user !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({ success: false, message: `User ${req.params.id} is not authorized to delete this bootcamp` });
         }
         await restaurant.deleteOne();
