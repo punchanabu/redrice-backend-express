@@ -7,6 +7,7 @@ const errorHandler = require('./middleware/errorHandler');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const { xss } = require('express-xss-sanitizer');
+const rateLimit = require('express-rate-limit');
 
 // load env vars
 dotenv.config({ path: './config/config.env' });
@@ -27,6 +28,12 @@ app.use(express.json());
 app.use(mongoSanitize());
 app.use(helmet());
 app.use(xss());
+// Rate Limiting
+const limiter = rateLimit({
+    windowsMs: 10 * 60 * 1000, // 10 mins
+    max: 100,
+});
+app.use(limiter);
 
 app.use(cookieParser());
 
