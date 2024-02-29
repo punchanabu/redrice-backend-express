@@ -1,6 +1,6 @@
 const Reservation = require('../models/Reservation');
 const Restaurant = require('../models/Restaurant');
-
+const checkForOverlappingReservation = require('../utils/checkOverlappingReservation');
 // @desc   Get all reservations
 // @route  GET /api/v1/reservations
 // @access Private
