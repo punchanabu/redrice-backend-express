@@ -6,6 +6,7 @@ const server = require('./server');
 const errorHandler = require('./middleware/errorHandler');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
+const { xss } = require('express-xss-sanitizer');
 
 // load env vars
 dotenv.config({ path: './config/config.env' });
@@ -25,6 +26,7 @@ app.use(express.json());
 // security
 app.use(mongoSanitize());
 app.use(helmet());
+app.use(xss());
 
 app.use(cookieParser());
 
