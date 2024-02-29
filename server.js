@@ -4,6 +4,7 @@ const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
 const server = require('./server');
 const errorHandler = require('./middleware/errorHandler');
+const mongoSanitize = require('express-mongo-sanitize');
 
 // load env vars
 dotenv.config({ path: './config/config.env' });
@@ -19,6 +20,9 @@ connectDB();
 const app = express();
 // body parser
 app.use(express.json());
+
+app.use(mongoSanitize());
+
 app.use(cookieParser());
 
 // use routes
@@ -33,8 +37,8 @@ const PORT = process.env.PORT || 5000;
 app.listen(
     PORT,
     console.log(
-        `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
-    )
+        `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`,
+    ),
 );
 
 // handle promise rejections
