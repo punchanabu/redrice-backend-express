@@ -1,6 +1,8 @@
 const Reservation = require('../models/Reservation');
 const Restaurant = require('../models/Restaurant');
 const checkForOverlappingReservation = require('../utils/checkOverlappingReservation');
+const countUserTable = require('../utils/countUserTable');
+
 // @desc   Get all reservations
 // @route  GET /api/v1/reservations
 // @access Private
@@ -62,10 +64,9 @@ exports.getReservation = async (req, res, next) => {
 // @access Private
 exports.addReservation = async (req, res, next) => {
     try {
-        const restaurantId = req.body.restaurantId;
-        req.body.restaurant = restaurantId;
-        req.body.user = req.user.id;
-        console.log(req.body);
+        const { restaurantId, tableNumber, startTime, endTime } = req.body;
+
+        // Validate the restaurants exists
         const restaurant = await Restaurant.findById(restaurantId);
         if (!restaurant) {
             const error = new Error('No restaurant found');
@@ -73,23 +74,48 @@ exports.addReservation = async (req, res, next) => {
             throw error;
         }
 
-        // Check if there is table available for reservation
-        if (restaurant.table_available < req.body.numberofTable) {
-            const error = new Error(
-                `Not enough table available number of table left: ${restaurant.table_available}`,
-            );
-            error.statusCode = 400;
-            throw error;
+        // If the endTime is not provided, set it to startTime + 1 hour
+        if (!endTime) {
+            const startTimeDate = new Date(startTime);
+            endTime = new Date(startTimeDate.getTime() + 60 * 60 * 1000);
+            req.body.endTime = endTime;
+        } else {
+            endTime = new Date(endTime);
         }
 
-        // The limit on the number of tables is enforced by the schema itself (`max: 3` on `numberofTable`)
+        // ensure startTime is a date object
+        startTime = new Date(startTime);
+
+        // check for overlapping reservations
+        const isOverlapping = await checkForOverlappingReservation(
+            restaurantId,
+            tableNumber,
+            startTime,
+            endTime,
+        );
+        if (isOverlapping) {
+            const Error = new Error(
+                'There is already a reservations for this time slot',
+            );
+            Error.statusCode = 404;
+            throw Error;
+        }
+
+        // Check the total of numbers of table already booked by user make sure that it is not exceed 3
+        const totalTablesBooked = await countUserTable(restaurantId, userId);
+        if (totalTablesBooked + tableNumber.length > 3) {
+            const Error = new Error(
+                'You cannot booked more than 3 table per account!',
+            );
+            Error.statusCode = 400;
+            throw Error;
+        }
+
+        req.body.restaurant = restaurantId;
+        req.body.user = userId;
 
         // Create reservation
         const newReservation = await Reservation.create(req.body);
-
-        // Update the restaurant available table
-        restaurant.table_available -= req.body.numberofTable;
-        await restaurant.save();
 
         res.status(201).json({ success: true, data: newReservation });
     } catch (err) {
