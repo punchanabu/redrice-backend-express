@@ -2,30 +2,34 @@
 const ErrorHandler = (err, req, res, next) => {
     console.error(err);
 
-    let err = { ...err };
-    err.message = err.message;
+    let errorResponse = {
+        ...err,
+        message: err.message,
+    };
 
-    // Mongoose bad ObjectId
+    // Mongoose bad ObjectId (CastError)
     if (err.name === 'CastError') {
         const message = `Resource not found with id of ${err.value}`;
-        err = new ErrorResponse(message, 404);
+        errorResponse = { statusCode: 404, message };
     }
 
     // Mongoose validation error
     if (err.name === 'ValidationError') {
-        const message = Object.values(err.errors).map((value) => value.message);
-        err = new ErrorResponse(message, 400);
+        const message = Object.values(err.errors)
+            .map((value) => value.message)
+            .join(', ');
+        errorResponse = { statusCode: 400, message };
     }
 
     // Mongoose duplicate key
     if (err.code === 11000) {
-        const message = `Duplicate field value entered`;
-        err = new ErrorResponse(message, 400);
+        const message = 'Duplicate field value entered';
+        errorResponse = { statusCode: 400, message };
     }
 
-    res.status(statusCode || 500).json({
+    res.status(errorResponse.statusCode || 500).json({
         success: false,
-        error: errorMessage || 'Server Error',
+        error: errorResponse.message || 'Server Error',
     });
 };
 
