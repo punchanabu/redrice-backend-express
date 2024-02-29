@@ -9,6 +9,7 @@ const helmet = require('helmet');
 const { xss } = require('express-xss-sanitizer');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
+const cors = require('cors');
 
 // load env vars
 dotenv.config({ path: './config/config.env' });
@@ -36,6 +37,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 app.use(hpp());
+app.use(cors());
 
 app.use(cookieParser());
 
