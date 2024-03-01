@@ -64,9 +64,14 @@ exports.getReservation = async (req, res, next) => {
 // @access Private
 exports.addReservation = async (req, res, next) => {
     try {
-        const { restaurantId, tableNumber, startTime, endTime } = req.body;
-
-        // Validate the restaurants exists
+        const {
+            restaurantId,
+            tableNumber,
+            startTime: rawStartTime,
+            endTime: rawEndTime,
+        } = req.body;
+        const userId = req.user.id;
+        // Validate the restaurant exists
         const restaurant = await Restaurant.findById(restaurantId);
         if (!restaurant) {
             const error = new Error('No restaurant found');
@@ -74,45 +79,45 @@ exports.addReservation = async (req, res, next) => {
             throw error;
         }
 
-        // If the endTime is not provided, set it to startTime + 1 hour
-        if (!endTime) {
-            const startTimeDate = new Date(startTime);
-            endTime = new Date(startTimeDate.getTime() + 60 * 60 * 1000);
-            req.body.endTime = endTime;
-        } else {
-            endTime = new Date(endTime);
+        // Convert startTime to Date object and ensure it's valid
+        let startTime = new Date(rawStartTime);
+        if (isNaN(startTime.getTime())) {
+            throw new Error('Invalid start time');
         }
 
-        // ensure startTime is a date object
-        startTime = new Date(startTime);
+        // If the endTime is not provided, set it to startTime + 1 hour
+        let endTime = rawEndTime
+            ? new Date(rawEndTime)
+            : new Date(startTime.getTime() + 60 * 60 * 1000);
 
-        // check for overlapping reservations
+        // Check for overlapping reservations
         const isOverlapping = await checkForOverlappingReservation(
+            Reservation,
             restaurantId,
             tableNumber,
             startTime,
             endTime,
         );
         if (isOverlapping) {
-            const Error = new Error(
-                'There is already a reservations for this time slot',
+            const error = new Error(
+                'There is already a reservation for this time slot',
             );
-            Error.statusCode = 404;
-            throw Error;
+            error.statusCode = 404;
+            throw error;
         }
 
-        // Check the total of numbers of table already booked by user make sure that it is not exceed 3
+        // Check the total numbers of table already booked by user to ensure it does not exceed 3
         const totalTablesBooked = await countUserTable(restaurantId, userId);
         if (totalTablesBooked + tableNumber.length > 3) {
-            const Error = new Error(
-                'You cannot booked more than 3 table per account!',
+            const error = new Error(
+                'You cannot book more than 3 tables per account!',
             );
-            Error.statusCode = 400;
-            throw Error;
+            error.statusCode = 400;
+            throw error;
         }
 
         req.body.restaurant = restaurantId;
-        req.body.user = userId;
+        req.body.user = userId; // Ensure userId is correctly defined and passed here
 
         // Create reservation
         const newReservation = await Reservation.create(req.body);
