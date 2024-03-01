@@ -17,7 +17,7 @@ exports.protect = async (req, res, next) => {
     if (!token) {
         return res.status(401).json({
             success: false,
-            message: 'Not authorize to access this route'
+            message: 'Not authorize to access this route',
         });
     }
 
@@ -28,14 +28,28 @@ exports.protect = async (req, res, next) => {
 
         console.log(decoded);
 
-        req.user = await User.findById(decoded.id);
+        const user = await User.findById(decoded.id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'No user found with this id',
+            });
+        }
+        req.user = user;
 
         next();
     } catch (err) {
         console.log(err.stack);
+        let message = 'Not authorized to access this route';
+        if (err.name === 'TokenExpiredError') {
+            message = 'Your token has expired, please log in again';
+        } else if (err.name === 'JsonWebTokenError') {
+            message = 'Invalid token, please log in again';
+        }
         return res.status(401).json({
             success: false,
-            message: 'Not authorize to access this route'
+            message: message,
         });
     }
 };
@@ -44,10 +58,16 @@ exports.protect = async (req, res, next) => {
 // เช็คว่ามี role ใน list หรือไม่
 exports.authorize = (...roles) => {
     return (req, res, next) => {
+        if (!req.user) {
+            return res.status(403).json({
+                success: false,
+                message: 'No user found in the request',
+            });
+        }
         if (!roles.includes(req.user.role)) {
             return res.status(403).json({
                 success: false,
-                message: `User role ${req.user.role} is not authorized to access this route`
+                message: `User role ${req.user.role} is not authorized to access this route`,
             });
         }
         next();
