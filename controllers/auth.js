@@ -1,5 +1,4 @@
 const User = require('../models/User');
-const ErrorHandler = require('../middleware/errorHandler');
 
 // @desc  Register user
 // @route POST /api/v1/auth/register
@@ -33,12 +32,10 @@ exports.login = async (req, res, next) => {
 
         // Validate email & password
         if (!email || !password) {
-            return res
-                .status(400)
-                .json({
-                    success: false,
-                    msg: 'Please provide an email and password',
-                });
+            return res.status(400).json({
+                success: false,
+                msg: 'Please provide an email and password',
+            });
         }
 
         // check for user
@@ -101,16 +98,25 @@ const sendTokenResponse = (user, statusCode, res) => {
 // @access Private
 
 exports.getMe = async (req, res, next) => {
-    const user = await User.findById(req.user.id);
-    res.status(200).json({
-        success: true,
-        data: user,
-    });
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            const error = new Error('User not found');
+            error.statusCode = 404;
+            return next(error);
+        }
+        res.status(200).json({
+            success: true,
+            data: user,
+        });
+    } catch (err) {
+        next(err);
+    }
 };
 
-//@desc  Log user out / clear cookie
-//@route Get /api/v1/auth/logout
-//@acess Private
+// @desc  Log user out / clear cookie
+// @route Get /api/v1/auth/logout
+// @acess Private
 
 exports.logout = async (req, res, next) => {
     res.cookie('token', 'none', {
