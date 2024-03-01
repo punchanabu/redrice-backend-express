@@ -49,11 +49,7 @@ exports.protect = async (req, res, next) => {
         }
         return res.status(401).json({
             success: false,
-<<<<<<< HEAD
             message: message,
-=======
-            message: 'Not authorize to access this route',
->>>>>>> main
         });
     }
 };

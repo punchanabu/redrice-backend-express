@@ -89,16 +89,13 @@ exports.deleteRestaurant = async (req, res, next) => {
         const restaurant = await Restaurant.findById(req.params.id);
         if (!restaurant) {
             const Error = new Error(
-                'No Restaurant with the id of ${req.params.id}',
+                `No Restaurant with the id of ${req.params.id}`,
             );
             Error.statusCode = 404;
             throw Error;
         }
 
-        if (
-            restaurant.user.toString() !== req.user.id &&
-            req.user.role !== 'admin'
-        ) {
+        if (req.user.role !== 'admin') {
             const Error = new Error(
                 'User ${req.params.id} is not authorized to delete this Restaurant',
             );
