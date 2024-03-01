@@ -19,11 +19,11 @@ exports.getRestaurant = async (req, res, next) => {
     try {
         const restaurant = await Restaurant.findById(req.params.id);
         if (!restaurant) {
-            const Error = new Error(
-                'No Restaurant with the id of ${req.params.id}',
+            const error = new Error(
+                `No Restaurant with the id of ${req.params.id}`,
             );
-            Error.statusCode = 404;
-            throw Error;
+            error.statusCode = 404;
+            throw error;
         }
         res.status(200).json({ success: true, data: restaurant });
     } catch (err) {
@@ -55,19 +55,19 @@ exports.updateRestaurant = async (req, res, next) => {
     try {
         let restaurant = await Restaurant.findById(req.params.id);
         if (!restaurant) {
-            const Error = new Error(
-                'No Restaurant with the id of ${req.params.id}',
+            const error = new Error(
+                `No Restaurant with the id of ${req.params.id}`,
             );
-            Error.statusCode = 404;
-            throw Error;
+            error.statusCode = 404;
+            throw error;
         }
 
         if (req.user.role !== 'admin') {
-            const Error = new Error(
-                'User ${req.params.id} is not authorized to update this Restaurant',
+            const error = new Error(
+                `User ${req.params.id} is not authorized to update this Restaurant`,
             );
-            Error.statusCode = 401;
-            throw Error;
+            error.statusCode = 401;
+            throw error;
         }
 
         restaurant = await Restaurant.findByIdAndUpdate(
@@ -88,19 +88,19 @@ exports.deleteRestaurant = async (req, res, next) => {
     try {
         const restaurant = await Restaurant.findById(req.params.id);
         if (!restaurant) {
-            const Error = new Error(
+            const error = new Error(
                 `No Restaurant with the id of ${req.params.id}`,
             );
-            Error.statusCode = 404;
-            throw Error;
+            error.statusCode = 404;
+            throw error;
         }
 
         if (req.user.role !== 'admin') {
-            const Error = new Error(
-                'User ${req.params.id} is not authorized to delete this Restaurant',
+            const error = new Error(
+                `User ${req.params.id} is not authorized to delete this Restaurant`,
             );
-            Error.statusCode = 401;
-            throw Error;
+            error.statusCode = 401;
+            throw error;
         }
 
         await restaurant.deleteOne();

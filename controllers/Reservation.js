@@ -9,7 +9,7 @@ const countUserTable = require('../utils/countUserTable');
 exports.getReservations = async (req, res, next) => {
     try {
         // Build the base of the query
-        let query = Reservation.find()
+        const query = Reservation.find()
             .populate({
                 path: 'restaurant',
                 select: 'name description',
@@ -80,13 +80,13 @@ exports.addReservation = async (req, res, next) => {
         }
 
         // Convert startTime to Date object and ensure it's valid
-        let startTime = new Date(rawStartTime);
+        const startTime = new Date(rawStartTime);
         if (isNaN(startTime.getTime())) {
             throw new Error('Invalid start time');
         }
 
         // If the endTime is not provided, set it to startTime + 1 hour
-        let endTime = rawEndTime
+        const endTime = rawEndTime
             ? new Date(rawEndTime)
             : new Date(startTime.getTime() + 60 * 60 * 1000);
 

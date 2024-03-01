@@ -32,12 +32,10 @@ exports.login = async (req, res, next) => {
 
         // Validate email & password
         if (!email || !password) {
-            return res
-                .status(400)
-                .json({
-                    success: false,
-                    msg: 'Please provide an email and password',
-                });
+            return res.status(400).json({
+                success: false,
+                msg: 'Please provide an email and password',
+            });
         }
 
         // check for user
@@ -116,9 +114,9 @@ exports.getMe = async (req, res, next) => {
     }
 };
 
-//@desc  Log user out / clear cookie
-//@route Get /api/v1/auth/logout
-//@acess Private
+// @desc  Log user out / clear cookie
+// @route Get /api/v1/auth/logout
+// @acess Private
 
 exports.logout = async (req, res, next) => {
     res.cookie('token', 'none', {
