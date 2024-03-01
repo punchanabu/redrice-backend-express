@@ -19,12 +19,11 @@ exports.getRestaurant = async (req, res, next) => {
     try {
         const restaurant = await Restaurant.findById(req.params.id);
         if (!restaurant) {
-            return next(
-                new ErrorHandler(
-                    `No restaurant with the id of ${req.params.id}`,
-                    404,
-                ),
+            const Error = new Error(
+                'No Restaurant with the id of ${req.params.id}',
             );
+            Error.statusCode = 404;
+            throw Error;
         }
         res.status(200).json({ success: true, data: restaurant });
     } catch (err) {
