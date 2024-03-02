@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+    app:
+        build: .
+        ports:
+            - '${PORT}:${PORT}'
+        environment:
+            MONGO_URI: ${MONGO_URI}
+            NODE_ENV: ${NODE_ENV}
+            PORT: ${PORT}
+            JWT_SECRET: ${JWT_SECRET}
+            JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+            JWT_COOKIE_EXPIRES_IN: ${JWT_COOKIE_EXPIRES_IN}
+        volumes:
+            - .:/app
+            - /app/node_modules
