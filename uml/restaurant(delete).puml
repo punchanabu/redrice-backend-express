@@ -11,7 +11,7 @@ participant "<<controllers>>\n:restaurants" as controllersRestaurants
 participant "<<model>>\n:Restaurant" as modelRestaurant
 database "<<MongoDB>>\n:restaurants" as RestaurantsDatabase
 
-client->server ++:req.post('/restaurants/:id')
+client->server ++:req.delete('/restaurants/:id')
 server->routerRestaurants ++:app.use('/restaurants', restaurants)
 routerRestaurants->>authMiddleware ++:protect, authorize('admin', 'user')
 
