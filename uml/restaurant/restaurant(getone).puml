@@ -1,0 +1,32 @@
+@startuml
+header Restaurant Diagram
+footer Page %page% of %lastpage%
+title "Manage Restaurant (Get) with Authorization"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:restaurants" as routerRestaurants
+participant "<<authMiddleware>>\n:auth" as authMiddleware
+participant "<<controllers>>\n:restaurants" as controllersRestaurants
+participant "<<model>>\n:Restaurant" as modelRestaurant
+database "<<MongoDB>>\n:restaurants" as RestaurantsDatabase
+
+client->server ++:req.get('/restaurants/:id')
+server->routerRestaurants ++:app.use('/restaurants', restaurants)
+routerRestaurants->>authMiddleware ++:protect
+
+alt Not Authorized
+    authMiddleware->>client :Protected
+else Authorized
+    authMiddleware->>routerRestaurants -- :
+    routerRestaurants->controllersRestaurants ++:getRestaurant()
+    controllersRestaurants->modelRestaurant ++:findById(req.params.id)
+    modelRestaurant ->RestaurantsDatabase ++: RestaurantSchema
+    RestaurantsDatabase --> modelRestaurant --: restaurant
+    controllersRestaurants <-- modelRestaurant --: restaurant
+    controllersRestaurants->client --:response
+end
+
+
+
+@enduml
