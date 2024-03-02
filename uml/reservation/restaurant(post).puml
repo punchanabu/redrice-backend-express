@@ -19,7 +19,7 @@ alt Not Authorized
     authMiddleware->>client :Unauthorized or Protected
 else Authorized
     authMiddleware->>routerReservations -- :
-    routerReservations->controllersReservations ++:createReservation()
+    routerReservations->controllersReservations ++:checkForOverlappingReservation() & countUserTable()
     controllersReservations->modelReservation ++:create(req.body)
     modelReservation ->ReservationsDatabase ++: ReservationSchema
     ReservationsDatabase --> modelReservation --: reservation
