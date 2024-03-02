@@ -10,6 +10,12 @@ participant "<<controllers>>\n:auth" as controllersAuth
 participant "<<model>>\n:User" as modelUser
 database "<<MongoDB>>\n:user" as UserDatabase
 
-
-
+client->server ++:req.post('/auth)
+server->routerAuth++:app.use('/register', register)
+routerAuth->controllersAuth ++:register()
+controllersAuth->modelUser ++: create(req.body)
+modelUser ->UserDatabase ++: UserSchema
+UserDatabase --> modelUser --: user
+controllersAuth <-- modelUser --: user
+controllersAuth->client --:response
 @enduml

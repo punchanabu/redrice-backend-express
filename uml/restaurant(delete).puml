@@ -19,8 +19,8 @@ alt Not Authorized
     authMiddleware->>client :Unauthorized or Protected
 else Authorized
     authMiddleware->>routerRestaurants -- :
-    routerRestaurants->controllersRestaurants ++:updateRestaurant()
-    controllersRestaurants->modelRestaurant ++:findByIdAndUpdate(req.params.id,req.body)
+    routerRestaurants->controllersRestaurants ++:deleteRestaurant()
+    controllersRestaurants->modelRestaurant ++:findByIdAndDelete(req.params.id,req.body)
     modelRestaurant ->RestaurantsDatabase ++: RestaurantSchema
     RestaurantsDatabase --> modelRestaurant --: restaurant
     controllersRestaurants <-- modelRestaurant --: restaurant
