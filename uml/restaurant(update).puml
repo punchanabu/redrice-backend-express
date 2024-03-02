@@ -1,7 +1,7 @@
 @startuml
 header Restaurant Diagram
 footer Page %page% of %lastpage%
-title "Manage Restaurant (Get) with Authorization"
+title "Manage Restaurant (PUT) with Authorization"
 
 participant "Client" as client
 participant "<<javaScript>>\n:server" as server
@@ -11,16 +11,16 @@ participant "<<controllers>>\n:restaurants" as controllersRestaurants
 participant "<<model>>\n:Restaurant" as modelRestaurant
 database "<<MongoDB>>\n:restaurants" as RestaurantsDatabase
 
-client->server ++:req.post('/restaurants')
+client->server ++:req.post('/restaurants/:id')
 server->routerRestaurants ++:app.use('/restaurants', restaurants)
-routerRestaurants->>authMiddleware ++:protect
+routerRestaurants->>authMiddleware ++:protect, authorize('admin', 'user')
 
 alt Not Authorized
-    authMiddleware->>client :Protected
+    authMiddleware->>client :Unauthorized or Protected
 else Authorized
     authMiddleware->>routerRestaurants -- :
-    routerRestaurants->controllersRestaurants ++:getRestaurants()
-    controllersRestaurants->modelRestaurant ++:find()
+    routerRestaurants->controllersRestaurants ++:updateRestaurant()
+    controllersRestaurants->modelRestaurant ++:findByIdAndUpdate(req.params.id,req.body)
     modelRestaurant ->RestaurantsDatabase ++: RestaurantSchema
     RestaurantsDatabase --> modelRestaurant --: restaurant
     controllersRestaurants <-- modelRestaurant --: restaurant
