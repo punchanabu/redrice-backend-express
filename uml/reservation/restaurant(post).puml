@@ -12,7 +12,7 @@ participant "<<model>>\n:Reservation" as modelReservation
 database "<<MongoDB>>\n:reservations" as ReservationsDatabase
 
 client->server ++:req.post('/reservations')
-server->routerreservations ++:app.use('/reservations', reservations)
+server->routerReservations ++:app.use('/reservations', reservations)
 routerReservations->>authMiddleware ++:protect, authorize('admin', 'user')
 
 alt Not Authorized
@@ -23,7 +23,7 @@ else Authorized
     controllersReservations->modelReservation ++:create(req.body)
     modelReservation ->ReservationsDatabase ++: ReservationSchema
     ReservationsDatabase --> modelReservation --: reservation
-    controllersRreservations <-- modelRreservation --: reservation
+    controllersReservations <-- modelReservation --: reservation
     controllersReservations->client --:response
 end
 
