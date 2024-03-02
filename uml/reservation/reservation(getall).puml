@@ -1,0 +1,32 @@
+@startuml
+header Reservation Diagram
+footer Page %page% of %lastpage%
+title "Manage Reservation (Get) with Authorization"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:reservations" as routerReservations
+participant "<<authMiddleware>>\n:auth" as authMiddleware
+participant "<<controllers>>\n:reservations" as controllersReservations
+participant "<<model>>\n:Reservation" as modelReservation
+database "<<MongoDB>>\n:reservations" as ReservationsDatabase
+
+client->server ++:req.get('/reservations')
+server->routerReservations ++:app.use('/reservations', reservations)
+routerReservations->>authMiddleware ++:protect
+
+alt Not Authorized
+    authMiddleware->>client :Protected
+else Authorized
+    authMiddleware->>routerReservations -- :
+    routerReservations->controllersReservations ++:getReservations()
+    controllersReservations->modelReservation ++:find()
+    modelReservation ->ReservationsDatabase ++: ReservationSchema
+    ReservationsDatabase --> modelReservation --: reservation
+    controllersReservations <-- modelReservation --: reservation
+    controllersReservations->client --:response
+end
+
+
+
+@enduml

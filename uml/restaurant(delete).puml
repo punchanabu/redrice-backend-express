@@ -1,7 +1,7 @@
 @startuml
 header Restaurant Diagram
 footer Page %page% of %lastpage%
-title "Manage Restaurant (PUT) with Authorization"
+title "Manage Restaurant (DELETE) with Authorization"
 
 participant "Client" as client
 participant "<<javaScript>>\n:server" as server

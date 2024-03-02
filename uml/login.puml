@@ -11,9 +11,9 @@ participant "<<model>>\n:User" as modelUser
 database "<<MongoDB>>\n:user" as UserDatabase
 
 client->server ++:req.post('/auth)
-server->routerAuth++:app.use('/register', register)
-routerAuth->controllersAuth ++:register()
-controllersAuth->modelUser ++: creck(req.body)
+server->routerAuth++:app.use('/login', login)
+routerAuth->controllersAuth ++:login()
+controllersAuth->modelUser ++: create(req.body)
 modelUser ->UserDatabase ++: UserSchema
 UserDatabase --> modelUser --: user
 controllersAuth <-- modelUser --: user
