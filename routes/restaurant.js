@@ -29,7 +29,5 @@ router
     .put(protect, authorize('admin', 'user'), updateRestaurant)
     .delete(protect, authorize('admin', 'user'), deleteRestaurant);
 
-router
-    .route('/image/:filename')
-    .get(getRestaurantImage);
+router.route('/image/:filename').get(getRestaurantImage);
 module.exports = router;
