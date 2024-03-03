@@ -174,3 +174,34 @@ exports.deleteReservation = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.updateReservationStatus = async (req, res, next) => {
+    const reservationId = req.params.id;
+    const newStatus = req.params.status;
+    try {
+        // Find the reservation by ID
+        const reservation = await Reservation.findById(reservationId);
+        if (!reservation) {
+            const error = new Error('No reservation found');
+            error.statusCode = 404;
+            throw error;
+        }
+        const user = req.user;
+        // Check authorization based on user role and reservation status
+        if (user.role === 'admin' && req.query.status === 'approved') {
+            reservation.status = newStatus;
+            await reservation.save();
+            res.status(200).json({
+                success: true,
+                data: {},
+                message: 'Reservation approved successfully'
+            });
+        } else {
+            const error = new Error('miss role or miss status');
+            error.statusCode = 404;
+            throw error;
+        };
+    } catch (err) {
+        next(err);
+    }
+};

@@ -5,7 +5,8 @@ const {
     getReservations,
     addReservation,
     updateReservation,
-    deleteReservation
+    deleteReservation,
+    updateReservationStatus
 } = require('../controllers/reservation');
 
 const router = express.Router({ mergeParams: true });
@@ -22,4 +23,5 @@ router
     .put(protect, authorize('user', 'admin'), updateReservation)
     .delete(protect, authorize('user', 'admin'), deleteReservation);
 
+router.route('/UpdateStatus/:id').put(protect, authorize('user', 'admin'), updateReservationStatus);
 module.exports = router;

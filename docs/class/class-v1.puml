@@ -1,0 +1,107 @@
+@startuml
+left to right direction
+package "SOFTDEV-RED-RICE" {
+    class "<<Application>>\nServer" as Server {}
+
+    class "<<Representation>>\nUser" as UserModel {
+        +String name
+        +String email
+        +String telephone
+        +String role
+        +String password
+        +DateTime createdAt
+    }
+
+    class "<<Representation>>\nRestaurant" as RestaurantModel {
+        +String name
+        +String address
+        +String telephone_number
+        +DateTime open_time
+        +DateTime close_time
+        +Number table_available
+        +String image
+        +DateTime createdAt
+    }
+
+    class "<<Representation>>\nReservation" as ReservationModel {
+        +Date dateTime
+        +ObjectId user
+        +ObjectId restaurant
+        +Enum String status
+        +DateTime createdAt
+    }
+
+    class "<<Resource>>\nAuth" as AuthController {
+        <<POST>> +login(): Token
+        <<POST>> +register(): Token
+        <<GET>> +getme(): User
+        <<GET>> +logout(): void
+    }
+
+    
+
+    class "<<Resource>>\nReservation" as ReservationController {
+        <<POST>> +createReservation(): Reservation
+        <<GET>> +getReservation(): Reservation[]
+    }
+
+    class "<<Resource>>\nReservation" as ReservationController2 {
+        <<GET>> +getReservation(): Reservation
+        <<PUT>> +updateReservation(): Reservation
+        <<DELETE>> +deleteReservation(): void
+    }
+
+     class "<<Resource>>\nReservation" as ReservationController3 {
+        <<PUT>> +updateReservationStatus(): Reservation
+    }
+
+    class "<<Resource>>\nRestaurant" as RestaurantController {
+        <<POST>> +createRestaurant(): Restaurant
+        <<GET>> +getRestaurant(): Restaurant[]
+    }
+
+
+    class "<<Resource>>\nRestaurant" as RestaurantController2 {
+        <<GET>> +getRestaurant(): Restaurant
+        <<PUT>> +updateRestaurant(): Restaurant
+        <<DELETE>> +deleteRestaurant(): void
+    }
+
+    class "<<Resource>>\nRestaurant" as RestaurantController3 {
+        <<GET>> +getRestaurantImage(): Image
+    }
+
+    class "<<Resource>>\nAuth Middleware" as AuthMiddleware {
+        +verifyToken()
+    }
+
+    class "<<Resource>>\nError Handler Middleware" as ErrorHandlerMiddleware {
+        +errorHandler()
+    }
+
+    class "<<Resource>>\nCount User Table Utility" as CountUserTable {
+        +countUserTable()
+    }
+}
+
+Server ..> AuthController : "/auth\n<<Path>>"
+Server ..> ReservationController : "/reservation\n<<Path>>"
+Server ..> RestaurantController : "/restaurant\n<<Path>>"
+
+
+
+AuthController ..> AuthMiddleware : "authenticates"
+ErrorHandlerMiddleware ..> Server : "handles errors"
+
+AuthController ..> UserModel : "data"
+
+RestaurantController ..> RestaurantController2 : "/{restaurant_id}\n<<Path>>"
+RestaurantController2 ..> RestaurantController3 : "/image\n<<Path>>"
+RestaurantController3 ..> RestaurantModel : "data"
+
+
+ReservationController ..> ReservationController2 : "/{reservation_id}\n<<Path>>"
+ReservationController2 ..> ReservationController3 : "/{reservation_status}\n<<Path>>"
+ReservationController3 ..> ReservationModel : "data"
+ReservationController3 ..> CountUserTable : "utilize"
+@enduml
