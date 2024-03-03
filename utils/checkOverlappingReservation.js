@@ -1,9 +1,9 @@
-async function checkForOverlappingReservation(
+async function checkForOverlappingReservation (
     Reservation,
     restaurantId,
     tableNumbers,
     startTime,
-    endTime,
+    endTime
 ) {
     const overlappingReservations = await Reservation.find({
         restaurant: restaurantId,
@@ -12,10 +12,10 @@ async function checkForOverlappingReservation(
             {
                 $and: [
                     { startTime: { $lt: endTime } },
-                    { endTime: { $gt: startTime } },
-                ],
-            },
-        ],
+                    { endTime: { $gt: startTime } }
+                ]
+            }
+        ]
     });
 
     return overlappingReservations.length > 0;

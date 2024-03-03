@@ -4,7 +4,7 @@ const {
     createRestaurant,
     deleteRestaurant,
     updateRestaurant,
-    getRestaurants,
+    getRestaurants
 } = require('../controllers/restaurant');
 
 const router = express.Router();

@@ -13,7 +13,7 @@ exports.register = async (req, res, next) => {
             email,
             telephone,
             password,
-            role,
+            role
         });
 
         sendTokenResponse(user, 200, res);
@@ -34,7 +34,7 @@ exports.login = async (req, res, next) => {
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
-                msg: 'Please provide an email and password',
+                msg: 'Please provide an email and password'
             });
         }
 
@@ -65,7 +65,7 @@ exports.login = async (req, res, next) => {
     } catch (err) {
         return res.status(401).json({
             success: false,
-            msg: 'Cannot convert email or password to string',
+            msg: 'Cannot convert email or password to string'
         });
     }
 };
@@ -79,9 +79,9 @@ const sendTokenResponse = (user, statusCode, res) => {
     const options = {
         expires: new Date(
             Date.now() +
-                process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+                process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
         ),
-        httpOnly: true,
+        httpOnly: true
     };
 
     if (process.env.NODE_ENV === 'production') {
@@ -89,7 +89,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     }
     res.status(statusCode).cookie('token', token, options).json({
         success: true,
-        token,
+        token
     });
 };
 
@@ -107,7 +107,7 @@ exports.getMe = async (req, res, next) => {
         }
         res.status(200).json({
             success: true,
-            data: user,
+            data: user
         });
     } catch (err) {
         next(err);
@@ -121,11 +121,11 @@ exports.getMe = async (req, res, next) => {
 exports.logout = async (req, res, next) => {
     res.cookie('token', 'none', {
         expires: new Date(Date.now() + 10 * 1000),
-        httpOnly: true,
+        httpOnly: true
     });
 
     res.status(200).json({
         success: true,
-        data: {},
+        data: {}
     });
 };

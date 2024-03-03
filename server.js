@@ -33,7 +33,7 @@ app.use(xss());
 // Rate Limiting
 const limiter = rateLimit({
     windowsMs: 10 * 60 * 1000, // 10 mins
-    max: 100,
+    max: 100
 });
 app.use(limiter);
 app.use(hpp());
@@ -53,8 +53,8 @@ const PORT = process.env.PORT || 5000;
 app.listen(
     PORT,
     console.log(
-        `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`,
-    ),
+        `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
+    )
 );
 
 // handle promise rejections
