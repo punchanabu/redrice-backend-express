@@ -44,8 +44,7 @@ app.use(cookieParser());
 // use routes
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/restaurant', restaurant);
-// setup an upload image route
-app.use('/uploads', express.static('uploads'));
+
 app.use('/api/v1/reservation', reservation);
 
 // use centralize error handler

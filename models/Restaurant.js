@@ -24,7 +24,7 @@ const ResSchema = new mongoose.Schema({
         type: Number,
         required: [true, 'Please add a number of available table'],
     },
-    imagePath: {
+    image: {
         type: String,
         required: false,
     },

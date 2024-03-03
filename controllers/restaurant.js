@@ -1,4 +1,20 @@
+const { GridFsStorage } = require('multer-gridfs-storage');
 const Restaurant = require('../models/Restaurant');
+const express = require('express');
+const gfs = require('gridfs-stream');
+const mongoose = require('mongoose'); 
+
+// Setup MongoDB connection (adjust if needed)
+const conn = mongoose.createConnection(process.env.MONGO_URI);
+
+// Initialize GridFSBucket
+let bucket;
+conn.once('open', () => {
+    bucket = new mongoose.mongo.GridFSBucket(conn.db, {
+        bucketName: 'uploads', 
+    });
+});
+
 
 // @desc   Create new Restaurant
 // @route  POST /api/v1/restaurants
@@ -6,12 +22,17 @@ const Restaurant = require('../models/Restaurant');
 exports.createRestaurant = async (req, res, next) => {
     try {
         const restaurantData = req.body;
-
+        
         if (req.file) {
-            restaurantData.image = req.file.path;
+            restaurantData.image = req.file.filename;
         }
+        
+        const restaurant = await Restaurant.create(restaurantData);
 
-        const restaurant = await Restaurant.create(req.body);
+        if (restaurant.image) {
+            const imageURL = `http://localhost:5000/api/v1/restaurant/image/${restaurant.image}`;
+            restaurant.image = imageURL;
+        }
         res.status(201).json({ success: true, data: restaurant });
     } catch (error) {
         next(error);
@@ -31,6 +52,12 @@ exports.getRestaurant = async (req, res, next) => {
             error.statusCode = 404;
             throw error;
         }
+
+        if (restaurant.image) {
+            const imageURL = `http://localhost:5000/api/v1/restaurant/image/${restaurant.image}`;
+            restaurant.image = imageURL;
+        }
+
         res.status(200).json({ success: true, data: restaurant });
     } catch (err) {
         next(err);
@@ -43,6 +70,12 @@ exports.getRestaurant = async (req, res, next) => {
 exports.getRestaurants = async (req, res, next) => {
     try {
         const restaurant = await Restaurant.find();
+        
+        if (restaurant.image) {
+            const imageURL = `http://localhost:5000/api/v1/restaurant/image/${restaurant.image}`;
+            restaurant.image = imageURL;
+        }
+
         res.status(200).json({
             success: true,
             count: restaurant.length,
@@ -81,6 +114,11 @@ exports.updateRestaurant = async (req, res, next) => {
             req.body,
             { new: true, runValidators: true },
         );
+
+        if (restaurant.image) {
+            const imageURL = `http://localhost:5000/api/v1/restaurant/image/${restaurant.image}`;
+            restaurant.image = imageURL;
+        }
         res.status(200).json({ success: true, data: restaurant });
     } catch (error) {
         next(error);
@@ -108,10 +146,36 @@ exports.deleteRestaurant = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-
+        
         await restaurant.deleteOne();
         res.status(200).json({ success: true, data: {} });
     } catch (error) {
         next(error);
+    }
+};
+
+// @desc  Get Restaurant Image
+// @route GET /api/v1/restaurants/image/:filename
+// @access Public
+exports.getRestaurantImage = async (req, res, next) => {
+    try {
+        if (!bucket) {
+            return res.status(500).json({ err: 'GridFS not initialized' });
+        }
+
+        const file = await bucket.find({ filename: req.params.filename }).toArray();
+
+        if (!file || file.length === 0) {
+            return res.status(404).json({ err: 'No file found' });
+        }
+
+        // Set content type for better browser handling
+        res.set('Content-Type', file[0].contentType); 
+
+        const readStream = bucket.openDownloadStreamByName(req.params.filename);
+        readStream.pipe(res);
+    } catch (error) {
+        console.error('Error fetching image:', error);
+        res.status(500).json({ err: 'Error fetching image' });
     }
 };

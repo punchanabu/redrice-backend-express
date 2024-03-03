@@ -1,11 +1,12 @@
 const express = require('express');
-const upload = require('../config/multer');
+const upload = require('../config/gridfs');
 const {
     getRestaurant,
     createRestaurant,
     deleteRestaurant,
     updateRestaurant,
     getRestaurants,
+    getRestaurantImage,
 } = require('../controllers/restaurant');
 
 const router = express.Router();
@@ -18,7 +19,7 @@ router
     .post(
         protect,
         authorize('admin', 'user'),
-        upload.single(image),
+        upload.single('image'),
         createRestaurant,
     );
 
@@ -28,4 +29,7 @@ router
     .put(protect, authorize('admin', 'user'), updateRestaurant)
     .delete(protect, authorize('admin', 'user'), deleteRestaurant);
 
+router
+    .route('/image/:filename')
+    .get(getRestaurantImage);
 module.exports = router;
