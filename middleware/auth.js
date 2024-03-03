@@ -17,7 +17,7 @@ exports.protect = async (req, res, next) => {
     if (!token || token === 'null') {
         return res.status(401).json({
             success: false,
-            message: 'Not authorize to access this route',
+            message: 'Not authorize to access this route'
         });
     }
 
@@ -33,7 +33,7 @@ exports.protect = async (req, res, next) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'No user found with this id',
+                message: 'No user found with this id'
             });
         }
         req.user = user;
@@ -49,7 +49,7 @@ exports.protect = async (req, res, next) => {
         }
         return res.status(401).json({
             success: false,
-            message,
+            message
         });
     }
 };
@@ -61,13 +61,13 @@ exports.authorize = (...roles) => {
         if (!req.user) {
             return res.status(403).json({
                 success: false,
-                message: 'No user found in the request',
+                message: 'No user found in the request'
             });
         }
         if (!roles.includes(req.user.role)) {
             return res.status(403).json({
                 success: false,
-                message: `User role ${req.user.role} is not authorized to access this route`,
+                message: `User role ${req.user.role} is not authorized to access this route`
             });
         }
         next();
