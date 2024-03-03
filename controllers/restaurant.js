@@ -1,5 +1,4 @@
 const Restaurant = require('../models/Restaurant');
-const Reservation = require('../models/Reservation');
 
 // @desc   Create new Restaurant
 // @route  POST /api/v1/restaurants
