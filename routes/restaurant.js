@@ -15,19 +15,19 @@ const { protect, authorize } = require('../middleware/auth');
 
 router
     .route('/')
-    .get(protect, getRestaurants)
+    .get(getRestaurants)
     .post(
         protect,
-        authorize('admin', 'user'),
+        authorize('admin'),
         upload.single('image'),
         createRestaurant,
     );
 
 router
     .route('/:id')
-    .get(protect, getRestaurant)
-    .put(protect, authorize('admin', 'user'), updateRestaurant)
-    .delete(protect, authorize('admin', 'user'), deleteRestaurant);
+    .get(getRestaurant)
+    .put(protect, authorize('admin'), updateRestaurant)
+    .delete(protect, authorize('admin'), deleteRestaurant);
 
 router.route('/image/:filename').get(getRestaurantImage);
 module.exports = router;
