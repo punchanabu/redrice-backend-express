@@ -19,7 +19,7 @@ exports.createRestaurant = async (req, res, next) => {
 
         if (req.file) {
             const fileName =  req.file.filename;
-            restaurantData.image = `http://localhost:5000/api/v1/restaurants/image/${fileName}`
+            restaurantData.image = `http://localhost:5000/api/v1/restaurant/image/${fileName}`
         }
 
         const restaurant = await Restaurant.create(restaurantData);
