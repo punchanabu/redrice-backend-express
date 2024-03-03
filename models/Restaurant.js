@@ -26,6 +26,7 @@ const ResSchema = new mongoose.Schema({
     },
     imagePath: {
         type: String,
+        required: false,
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,

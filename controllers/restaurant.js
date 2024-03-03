@@ -5,6 +5,12 @@ const Restaurant = require('../models/Restaurant');
 // @access Private
 exports.createRestaurant = async (req, res, next) => {
     try {
+        const restaurantData = req.body;
+
+        if (req.file) {
+            restaurantData.image = req.file.path;
+        }
+
         const restaurant = await Restaurant.create(req.body);
         res.status(201).json({ success: true, data: restaurant });
     } catch (error) {

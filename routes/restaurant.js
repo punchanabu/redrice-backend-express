@@ -1,4 +1,5 @@
 const express = require('express');
+const upload = require('../config/multer');
 const {
     getRestaurant,
     createRestaurant,
@@ -14,7 +15,12 @@ const { protect, authorize } = require('../middleware/auth');
 router
     .route('/')
     .get(protect, getRestaurants)
-    .post(protect, authorize('admin', 'user'), createRestaurant);
+    .post(
+        protect,
+        authorize('admin', 'user'),
+        upload.single(image),
+        createRestaurant,
+    );
 
 router
     .route('/:id')
