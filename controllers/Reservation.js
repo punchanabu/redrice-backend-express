@@ -1,6 +1,5 @@
 const Reservation = require('../models/Reservation');
 const Restaurant = require('../models/Restaurant');
-const checkForOverlappingReservation = require('../utils/checkOverlappingReservation');
 const countUserTable = require('../utils/countUserTable');
 
 // @desc   Get all reservations
@@ -16,8 +15,6 @@ exports.getReservations = async (req, res, next) => {
             })
             .lean(); // use lean for improve the performance :D ???
 
-        
-
         if (req.user.role !== 'admin') {
             query.where({ user: req.user.id });
         }
@@ -29,6 +26,7 @@ exports.getReservations = async (req, res, next) => {
             count: reservations.length,
             data: reservations
         });
+
     } catch (err) {
         next(err);
     }
@@ -66,12 +64,10 @@ exports.addReservation = async (req, res, next) => {
     try {
         const {
             restaurantId,
-            tableNumber,
-            startTime: rawStartTime,
-            endTime: rawEndTime
         } = req.body;
 
         const userId = req.user.id;
+
         // Validate the restaurant exists
         const restaurant = await Restaurant.findById(restaurantId);
         if (!restaurant) {
@@ -80,36 +76,9 @@ exports.addReservation = async (req, res, next) => {
             throw error;
         }
 
-        // Convert startTime to Date object and ensure it's valid
-        const startTime = new Date(rawStartTime);
-        if (isNaN(startTime.getTime())) {
-            throw new Error('Invalid start time');
-        }
-
-        // If the endTime is not provided, set it to startTime + 1 hour
-        const endTime = rawEndTime
-            ? new Date(rawEndTime)
-            : new Date(startTime.getTime() + 60 * 60 * 1000);
-
-        // Check for overlapping reservations
-        const isOverlapping = await checkForOverlappingReservation(
-            Reservation,
-            restaurantId,
-            tableNumber,
-            startTime,
-            endTime
-        );
-        if (isOverlapping) {
-            const error = new Error(
-                'There is already a reservation for this time slot'
-            );
-            error.statusCode = 404;
-            throw error;
-        }
-
         // Check the total numbers of table already booked by user to ensure it does not exceed 3
         const totalTablesBooked = await countUserTable(restaurantId, userId);
-        if (totalTablesBooked + tableNumber.length > 3) {
+        if (totalTablesBooked > 3) {
             const error = new Error(
                 'You cannot book more than 3 tables per account!'
             );
@@ -118,12 +87,13 @@ exports.addReservation = async (req, res, next) => {
         }
 
         req.body.restaurant = restaurantId;
-        req.body.user = userId; // Ensure userId is correctly defined and passed here
+        req.body.user = userId; 
 
         // Create reservation
         const newReservation = await Reservation.create(req.body);
 
         res.status(201).json({ success: true, data: newReservation });
+
     } catch (err) {
         next(err);
     }

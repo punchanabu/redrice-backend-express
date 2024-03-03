@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+package "VacQ"{
+    class "<<Application>>\nVacQService" as VacQService{}
+
+    class "<<Resource>>\nHospitals" as ResourceHospitals{
+        <<GET>> +getHospitals():Hospital
+        <<POST>> +createHospital():Hospital
+    }
+
+    class "<<Resource>>\nHospital" as ResourceHospital {
+        <<GET>> +getHospital(): Hospital
+        <<PUT>> +updateHospital(): Hospital
+        <<DELETE>> +deleteHospital(): void
+    }
+
+    class "<<Representation>>\nHospital" as RepresentationHospital {
+        -name
+        -address
+        -district
+        -province
+        -postalcode
+        -telephone
+        -region
+    }
+
+}
+
+VacQService ..> ResourceHospitals:"/hospitals\n<<Path>>"
+ResourceHospitals ..> ResourceHospital: "/{hospitalId}\n<<Path>>"
+ResourceHospital ..> RepresentationHospital: "<<use>>"
+
+@enduml

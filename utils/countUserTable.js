@@ -1,13 +1,15 @@
 const mongoose = require('mongoose');
 const Reservation = require('../models/Reservation');
 
-async function countUserTable (restaurantId, userId) {
+async function countUserReservations(restaurantId, userId) {
     try {
-        // Check if restaurantId is a valid ObjectId
+
+        // Validate restaurantId
         if (!mongoose.Types.ObjectId.isValid(restaurantId)) {
             throw new Error('Invalid restaurantId');
         }
-        // Check if userId is a valid ObjectId
+        
+        // Validate userId
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             throw new Error('Invalid userId');
         }
@@ -15,24 +17,24 @@ async function countUserTable (restaurantId, userId) {
         const result = await Reservation.aggregate([
             {
                 $match: {
-                    restaurant: new mongoose.Types.ObjectId(restaurantId),
-                    user: new mongoose.Types.ObjectId(userId)
+                    restaurant: new mongoose.ObjectId(restaurantId),
+                    user: new mongoose.ObjectId(userId),
                 }
             },
             {
                 $group: {
-                    _id: null, // Grouping by null to aggregate the count for all matching documents
-                    totalTables: { $sum: { $size: '$tableNumber' } } // Calculate the total number of tables
+                    _id: null, 
+                    count: { $sum: 1 } 
                 }
             }
         ]);
 
-        // Return the totalTables count or 0 if no reservations are found
-        return result.length > 0 ? result[0].totalTables : 0;
+        
+        return result.length > 0 ? result[0].count : 0;
     } catch (err) {
-        console.error('Error in countUserTable:', err.message);
-        throw err; // Ensure the error is thrown with the correct message
+        console.error('Error in countUserReservations:', err.message);
+        throw err;
     }
 }
 
-module.exports = countUserTable;
+module.exports = countUserReservations;

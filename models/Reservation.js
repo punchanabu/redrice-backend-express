@@ -1,27 +1,19 @@
 const mongoose = require('mongoose');
 
 const ReservationSchema = new mongoose.Schema({
-    startTime: {
+    dateTime: {
         type: Date,
-        required: true
-    },
-    endTime: {
-        type: Date,
-        required: true
-    },
-    tableNumber: {
-        type: [Number],
-        required: true
+        required: [true, 'Please add a dateTime for this reservatuin']
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: [true, 'Please add a user for this reservation']
     },
     restaurant: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Restaurant',
-        required: true
+        required: [true, "Please add a restaurant for this reservation"]
     },
     status: {
         type: String,
