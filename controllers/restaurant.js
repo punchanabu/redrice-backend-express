@@ -1,5 +1,14 @@
 const Restaurant = require('../models/Restaurant');
 const mongoose = require('mongoose');
+const conn = mongoose.createConnection(process.env.MONGO_URI);
+// Initialize GridFSBucket
+let bucket;
+conn.once('open', () => {
+    bucket = new mongoose.mongo.GridFSBucket(conn.db, {
+        bucketName: 'uploads'
+    });
+    console.log('Open a tcp connection to GridFS bucket 🚀');
+});
 
 // @desc   Create new Restaurant
 // @route  POST /api/v1/restaurants
@@ -128,16 +137,6 @@ exports.deleteRestaurant = async (req, res, next) => {
 // @access Public
 exports.getRestaurantImage = async (req, res, next) => {
     try {
-        
-        const conn = mongoose.createConnection(process.env.MONGO_URI);
-        // Initialize GridFSBucket
-        let bucket;
-        conn.once('open', () => {
-            bucket = new mongoose.mongo.GridFSBucket(conn.db, {
-                bucketName: 'uploads'
-            });
-            console.log('Open a tcp connection to GridFS bucket 🚀');
-        });
 
         if (!bucket) {
             return res.status(500).json({ err: 'GridFS not initialized' });
