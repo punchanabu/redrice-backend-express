@@ -24,6 +24,10 @@ const ResSchema = new mongoose.Schema({
         type: Number,
         required: [true, 'Please add a number of available table'],
     },
+    image: {
+        type: String,
+        required: false,
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     createdAt: {
