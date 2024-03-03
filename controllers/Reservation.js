@@ -16,7 +16,7 @@ exports.getReservations = async (req, res, next) => {
             })
             .lean(); // use lean for improve the performance :D ???
 
-        // Filter based on user role and potential restaurandId
+        
 
         if (req.user.role !== 'admin') {
             query.where({ user: req.user.id });
