@@ -1,7 +1,7 @@
 @startuml
 header Reservation Diagram
 footer Page %page% of %lastpage%
-title "Manage Reservation (POST) with Authorization"
+title "Manage Reservation (DELETE) with Authorization"
 
 participant "Client" as client
 participant "<<javaScript>>\n:server" as server
@@ -11,16 +11,16 @@ participant "<<controllers>>\n:reservations" as controllersReservations
 participant "<<model>>\n:Reservation" as modelReservation
 database "<<MongoDB>>\n:reservations" as ReservationsDatabase
 
-client->server ++:req.post('/reservations')
+client->server ++:req.delete('/reservations/:id')
 server->routerReservations ++:app.use('/reservations', reservations)
-routerReservations->>authMiddleware ++:protect, authorize('admin', 'user')
+routerReservations->>authMiddleware ++:protect, authorize('admin')
 
 alt Not Authorized
     authMiddleware->>client :Unauthorized or Protected
 else Authorized
     authMiddleware->>routerReservations -- :
-    routerReservations->controllersReservations ++:addReservation()
-    controllersReservations->modelReservation ++:create(req.body)
+    routerReservations->controllersReservations ++:deleteReservation()
+    controllersReservations->modelReservation ++:findByIdAndDelete(req.params.id,req.body)
     modelReservation ->ReservationsDatabase ++: ReservationSchema
     ReservationsDatabase --> modelReservation --: reservation
     controllersReservations <-- modelReservation --: reservation

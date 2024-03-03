@@ -13,7 +13,7 @@ database "<<MongoDB>>\n:reservations" as ReservationsDatabase
 
 client->server ++:req.put('/reservations/:id')
 server->routerReservations ++:app.use('/reservations', reservations)
-routerReservations->>authMiddleware ++:protect, authorize('admin', 'user')
+routerReservations->>authMiddleware ++:protect, authorize('admin')
 
 alt Not Authorized
     authMiddleware->>client :Unauthorized or Protected
