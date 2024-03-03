@@ -217,7 +217,7 @@ exports.updateReservationStatus = async (req, res, next) => {
         }
         const user = req.user;
         // Check authorization based on user role and reservation status
-        if (user.role === 'admin' && req.body.status === 'approved') {
+        if (user.role === 'admin' && req.query.status === 'approved') {
             reservation.status = newStatus;
             await reservation.save();
             res.status(200).json({

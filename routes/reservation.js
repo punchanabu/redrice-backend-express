@@ -22,6 +22,6 @@ router
     .get(protect, getReservation)
     .put(protect, authorize('user', 'admin'), updateReservation)
     .delete(protect, authorize('user', 'admin'), deleteReservation);
-router.route('/UpdateStatus/:id').put(protect, updateReservationStatus);
+router.route('/UpdateStatus/:id').put(protect, authorize('user', 'admin'), updateReservationStatus);
 
 module.exports = router;
