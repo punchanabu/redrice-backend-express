@@ -1,17 +1,6 @@
 const Restaurant = require('../models/Restaurant');
 const mongoose = require('mongoose');
 
-// Setup MongoDB connection (adjust if needed)
-const conn = mongoose.createConnection(process.env.MONGO_URI);
-
-// Initialize GridFSBucket
-let bucket;
-conn.once('open', () => {
-    bucket = new mongoose.mongo.GridFSBucket(conn.db, {
-        bucketName: 'uploads',
-    });
-});
-
 // @desc   Create new Restaurant
 // @route  POST /api/v1/restaurants
 // @access Private
@@ -20,16 +9,14 @@ exports.createRestaurant = async (req, res, next) => {
         const restaurantData = req.body;
 
         if (req.file) {
-            restaurantData.image = req.file.filename;
+            const fileName =  req.file.filename;
+            restaurantData.image = `http://localhost:5000/api/v1/restaurants/image/${fileName}`
         }
 
         const restaurant = await Restaurant.create(restaurantData);
 
-        if (restaurant.image) {
-            const imageURL = `http://localhost:5000/api/v1/restaurant/image/${restaurant.image}`;
-            restaurant.image = imageURL;
-        }
         res.status(201).json({ success: true, data: restaurant });
+
     } catch (error) {
         next(error);
     }
@@ -43,15 +30,10 @@ exports.getRestaurant = async (req, res, next) => {
         const restaurant = await Restaurant.findById(req.params.id);
         if (!restaurant) {
             const error = new Error(
-                `No Restaurant with the id of ${req.params.id}`,
+                `No Restaurant with the id of ${req.params.id}`
             );
             error.statusCode = 404;
             throw error;
-        }
-
-        if (restaurant.image) {
-            const imageURL = `http://localhost:5000/api/v1/restaurant/image/${restaurant.image}`;
-            restaurant.image = imageURL;
         }
 
         res.status(200).json({ success: true, data: restaurant });
@@ -67,15 +49,10 @@ exports.getRestaurants = async (req, res, next) => {
     try {
         const restaurant = await Restaurant.find();
 
-        if (restaurant.image) {
-            const imageURL = `http://localhost:5000/api/v1/restaurant/image/${restaurant.image}`;
-            restaurant.image = imageURL;
-        }
-
         res.status(200).json({
             success: true,
             count: restaurant.length,
-            data: restaurant,
+            data: restaurant
         });
     } catch (error) {
         next(error);
@@ -91,7 +68,7 @@ exports.updateRestaurant = async (req, res, next) => {
         let restaurant = await Restaurant.findById(req.params.id);
         if (!restaurant) {
             const error = new Error(
-                `No Restaurant with the id of ${req.params.id}`,
+                `No Restaurant with the id of ${req.params.id}`
             );
             error.statusCode = 404;
             throw error;
@@ -99,7 +76,7 @@ exports.updateRestaurant = async (req, res, next) => {
 
         if (req.user.role !== 'admin') {
             const error = new Error(
-                `User ${req.params.id} is not authorized to update this Restaurant`,
+                `User ${req.params.id} is not authorized to update this Restaurant`
             );
             error.statusCode = 401;
             throw error;
@@ -108,13 +85,9 @@ exports.updateRestaurant = async (req, res, next) => {
         restaurant = await Restaurant.findByIdAndUpdate(
             req.params.id,
             req.body,
-            { new: true, runValidators: true },
+            { new: true, runValidators: true }
         );
 
-        if (restaurant.image) {
-            const imageURL = `http://localhost:5000/api/v1/restaurant/image/${restaurant.image}`;
-            restaurant.image = imageURL;
-        }
         res.status(200).json({ success: true, data: restaurant });
     } catch (error) {
         next(error);
@@ -129,7 +102,7 @@ exports.deleteRestaurant = async (req, res, next) => {
         const restaurant = await Restaurant.findById(req.params.id);
         if (!restaurant) {
             const error = new Error(
-                `No Restaurant with the id of ${req.params.id}`,
+                `No Restaurant with the id of ${req.params.id}`
             );
             error.statusCode = 404;
             throw error;
@@ -137,7 +110,7 @@ exports.deleteRestaurant = async (req, res, next) => {
 
         if (req.user.role !== 'admin') {
             const error = new Error(
-                `User ${req.params.id} is not authorized to delete this Restaurant`,
+                `User ${req.params.id} is not authorized to delete this Restaurant`
             );
             error.statusCode = 401;
             throw error;
@@ -155,6 +128,17 @@ exports.deleteRestaurant = async (req, res, next) => {
 // @access Public
 exports.getRestaurantImage = async (req, res, next) => {
     try {
+        
+        const conn = mongoose.createConnection(process.env.MONGO_URI);
+        // Initialize GridFSBucket
+        let bucket;
+        conn.once('open', () => {
+            bucket = new mongoose.mongo.GridFSBucket(conn.db, {
+                bucketName: 'uploads'
+            });
+            console.log('Open a tcp connection to GridFS bucket 🚀');
+        });
+
         if (!bucket) {
             return res.status(500).json({ err: 'GridFS not initialized' });
         }

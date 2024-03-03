@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Reservation = require('../models/Reservation');
 
-async function countUserTable(restaurantId, userId) {
+async function countUserTable (restaurantId, userId) {
     try {
         // Check if restaurantId is a valid ObjectId
         if (!mongoose.Types.ObjectId.isValid(restaurantId)) {
@@ -16,15 +16,15 @@ async function countUserTable(restaurantId, userId) {
             {
                 $match: {
                     restaurant: new mongoose.Types.ObjectId(restaurantId),
-                    user: new mongoose.Types.ObjectId(userId),
-                },
+                    user: new mongoose.Types.ObjectId(userId)
+                }
             },
             {
                 $group: {
                     _id: null, // Grouping by null to aggregate the count for all matching documents
-                    totalTables: { $sum: { $size: '$tableNumber' } }, // Calculate the total number of tables
-                },
-            },
+                    totalTables: { $sum: { $size: '$tableNumber' } } // Calculate the total number of tables
+                }
+            }
         ]);
 
         // Return the totalTables count or 0 if no reservations are found

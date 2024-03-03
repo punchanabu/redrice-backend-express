@@ -5,7 +5,7 @@ const {
     getReservations,
     addReservation,
     updateReservation,
-    deleteReservation,
+    deleteReservation
 } = require('../controllers/reservation');
 
 const router = express.Router({ mergeParams: true });

@@ -12,7 +12,7 @@ exports.getReservations = async (req, res, next) => {
         const query = Reservation.find()
             .populate({
                 path: 'restaurant',
-                select: 'name description',
+                select: 'name description'
             })
             .lean(); // use lean for improve the performance :D ???
 
@@ -27,7 +27,7 @@ exports.getReservations = async (req, res, next) => {
         res.status(200).json({
             success: true,
             count: reservations.length,
-            data: reservations,
+            data: reservations
         });
     } catch (err) {
         next(err);
@@ -42,7 +42,7 @@ exports.getReservation = async (req, res, next) => {
     try {
         const reservation = await Reservation.findById(req.params.id).populate({
             path: 'restaurant',
-            select: 'name description',
+            select: 'name description'
         });
 
         if (!reservation) {
@@ -68,8 +68,9 @@ exports.addReservation = async (req, res, next) => {
             restaurantId,
             tableNumber,
             startTime: rawStartTime,
-            endTime: rawEndTime,
+            endTime: rawEndTime
         } = req.body;
+
         const userId = req.user.id;
         // Validate the restaurant exists
         const restaurant = await Restaurant.findById(restaurantId);
@@ -96,11 +97,11 @@ exports.addReservation = async (req, res, next) => {
             restaurantId,
             tableNumber,
             startTime,
-            endTime,
+            endTime
         );
         if (isOverlapping) {
             const error = new Error(
-                'There is already a reservation for this time slot',
+                'There is already a reservation for this time slot'
             );
             error.statusCode = 404;
             throw error;
@@ -110,7 +111,7 @@ exports.addReservation = async (req, res, next) => {
         const totalTablesBooked = await countUserTable(restaurantId, userId);
         if (totalTablesBooked + tableNumber.length > 3) {
             const error = new Error(
-                'You cannot book more than 3 tables per account!',
+                'You cannot book more than 3 tables per account!'
             );
             error.statusCode = 400;
             throw error;
@@ -157,8 +158,8 @@ exports.updateReservation = async (req, res, next) => {
             req.body,
             {
                 new: true,
-                runValidators: true,
-            },
+                runValidators: true
+            }
         );
 
         res.status(200).json({ success: true, data: appointment });
@@ -186,7 +187,7 @@ exports.deleteReservation = async (req, res, next) => {
             req.user.role !== 'admin'
         ) {
             const error = new Error(
-                'Not authorized to delete this reservation',
+                'Not authorized to delete this reservation'
             );
             error.statusCode = 401;
             throw error;
@@ -197,7 +198,7 @@ exports.deleteReservation = async (req, res, next) => {
         res.status(200).json({
             success: true,
             data: {},
-            message: 'Reservation deleted successfully',
+            message: 'Reservation deleted successfully'
         });
     } catch (err) {
         next(err);

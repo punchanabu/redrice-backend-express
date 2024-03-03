@@ -6,7 +6,7 @@ const {
     deleteRestaurant,
     updateRestaurant,
     getRestaurants,
-    getRestaurantImage,
+    getRestaurantImage
 } = require('../controllers/restaurant');
 
 const router = express.Router();
@@ -20,7 +20,7 @@ router
         protect,
         authorize('admin'),
         upload.single('image'),
-        createRestaurant,
+        createRestaurant
     );
 
 router
