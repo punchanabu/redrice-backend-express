@@ -51,9 +51,6 @@ package "SOFTDEV-RED-RICE" {
         <<DELETE>> +deleteReservation(): void
     }
 
-     class "<<Resource>>\nReservation" as ReservationController3 {
-        <<PUT>> +updateReservationStatus(): Reservation
-    }
 
     class "<<Resource>>\nRestaurant" as RestaurantController {
         <<POST>> +createRestaurant(): Restaurant
@@ -67,21 +64,14 @@ package "SOFTDEV-RED-RICE" {
         <<DELETE>> +deleteRestaurant(): void
     }
 
-    class "<<Resource>>\nRestaurant" as RestaurantController3 {
-        <<GET>> +getRestaurantImage(): Image
-    }
 
     class "<<Resource>>\nAuth Middleware" as AuthMiddleware {
         +verifyToken()
+        +protect()
+        +authorize()
     }
 
-    class "<<Resource>>\nError Handler Middleware" as ErrorHandlerMiddleware {
-        +errorHandler()
-    }
 
-    class "<<Resource>>\nCount User Table Utility" as CountUserTable {
-        +countUserTable()
-    }
 }
 
 Server ..> AuthController : "/auth\n<<Path>>"
@@ -91,17 +81,13 @@ Server ..> RestaurantController : "/restaurant\n<<Path>>"
 
 
 AuthController ..> AuthMiddleware : "authenticates"
-ErrorHandlerMiddleware ..> Server : "handles errors"
 
 AuthController ..> UserModel : "data"
 
 RestaurantController ..> RestaurantController2 : "/{restaurant_id}\n<<Path>>"
-RestaurantController2 ..> RestaurantController3 : "/image\n<<Path>>"
-RestaurantController3 ..> RestaurantModel : "data"
+RestaurantController2 ..> RestaurantModel : "data"
 
 
 ReservationController ..> ReservationController2 : "/{reservation_id}\n<<Path>>"
-ReservationController2 ..> ReservationController3 : "/{reservation_status}\n<<Path>>"
-ReservationController3 ..> ReservationModel : "data"
-ReservationController3 ..> CountUserTable : "utilize"
+ReservationController2 ..> ReservationModel : "data"
 @enduml
