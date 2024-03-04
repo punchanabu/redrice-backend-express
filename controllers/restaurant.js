@@ -18,14 +18,13 @@ exports.createRestaurant = async (req, res, next) => {
         const restaurantData = req.body;
 
         if (req.file) {
-            const fileName =  req.file.filename;
-            restaurantData.image = `http://localhost:5000/api/v1/restaurant/image/${fileName}`
+            const fileName = req.file.filename;
+            restaurantData.image = `http://localhost:5000/api/v1/restaurant/image/${fileName}`;
         }
 
         const restaurant = await Restaurant.create(restaurantData);
 
         res.status(201).json({ success: true, data: restaurant });
-
     } catch (error) {
         next(error);
     }
@@ -137,7 +136,6 @@ exports.deleteRestaurant = async (req, res, next) => {
 // @access Public
 exports.getRestaurantImage = async (req, res, next) => {
     try {
-
         if (!bucket) {
             return res.status(500).json({ err: 'GridFS not initialized' });
         }

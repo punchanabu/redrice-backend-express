@@ -13,7 +13,7 @@ database "<<MongoDB>>\n:reservations" as ReservationsDatabase
 
 client->server ++:req.delete('/reservations/:id')
 server->routerReservations ++:app.use('/reservations', reservations)
-routerReservations->>authMiddleware ++:protect, authorize('admin')
+routerReservations->>authMiddleware ++:protect, authorize('admin', 'user')
 
 alt Not Authorized
     authMiddleware->>client :Unauthorized or Protected
