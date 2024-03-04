@@ -26,7 +26,6 @@ exports.getReservations = async (req, res, next) => {
             count: reservations.length,
             data: reservations
         });
-
     } catch (err) {
         next(err);
     }
@@ -63,7 +62,7 @@ exports.getReservation = async (req, res, next) => {
 exports.addReservation = async (req, res, next) => {
     try {
         const {
-            restaurantId,
+            restaurantId
         } = req.body;
 
         const userId = req.user.id;
@@ -87,13 +86,12 @@ exports.addReservation = async (req, res, next) => {
         }
 
         req.body.restaurant = restaurantId;
-        req.body.user = userId; 
+        req.body.user = userId;
 
         // Create reservation
         const newReservation = await Reservation.create(req.body);
 
         res.status(201).json({ success: true, data: newReservation });
-
     } catch (err) {
         next(err);
     }

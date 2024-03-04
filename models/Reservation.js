@@ -13,7 +13,7 @@ const ReservationSchema = new mongoose.Schema({
     restaurant: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Restaurant',
-        required: [true, "Please add a restaurant for this reservation"]
+        required: [true, 'Please add a restaurant for this reservation']
     },
     status: {
         type: String,

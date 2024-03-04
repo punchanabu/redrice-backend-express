@@ -13,19 +13,12 @@ database "<<MongoDB>>\n:restaurants" as RestaurantsDatabase
 
 client->server ++:req.get('/restaurants')
 server->routerRestaurants ++:app.use('/restaurants', restaurants)
-routerRestaurants->>authMiddleware ++:protect
-
-alt Not Authorized
-    authMiddleware->>client :Protected
-else Authorized
-    authMiddleware->>routerRestaurants -- :
-    routerRestaurants->controllersRestaurants ++:getRestaurants()
-    controllersRestaurants->modelRestaurant ++:find()
-    modelRestaurant ->RestaurantsDatabase ++: RestaurantSchema
-    RestaurantsDatabase --> modelRestaurant --: restaurant
-    controllersRestaurants <-- modelRestaurant --: restaurant
-    controllersRestaurants->client --:response
-end
+routerRestaurants->controllersRestaurants ++:getRestaurants()
+controllersRestaurants->modelRestaurant ++:find()
+modelRestaurant ->RestaurantsDatabase ++: RestaurantSchema
+RestaurantsDatabase --> modelRestaurant --: restaurant
+controllersRestaurants <-- modelRestaurant --: restaurant
+controllersRestaurants->client --:response
 
 
 
