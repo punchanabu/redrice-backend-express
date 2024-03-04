@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const ReservationSchema = new mongoose.Schema({
     dateTime: {
         type: Date,
-        required: [true, 'Please add a dateTime for this reservatuin']
+        required: [true, 'Please add a dateTime for this reservation']
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
